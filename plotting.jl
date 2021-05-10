@@ -68,28 +68,28 @@ function PlotInXi(obj::Plotting,u::Array{Float64,2},index::Int,info::String)
     end
 
     # start plot
-    fig = figure(figsize=(9,8)) # Create a figure and save its handle
+    fig = figure(info,figsize=(9,8)) # Create a figure and save its handle
     ax = gca()
     xgrid, ygrid = meshgrid(xiFine, xiFine)
     surf(xgrid, ygrid, uPlot', cmap=ColorMap("viridis"), alpha=0.7)
+    tick_params(labelsize=12) 
+    xlabel(L"\xi_1", fontsize=15)
+    ylabel(L"\xi_2", fontsize=15)
     tight_layout()
 
-    PyPlot.savefig("results/PlotXi$(info)Nx$(Nx)N$(obj.settings.N)tEnd$(obj.settings.tEnd).png")
+    #PyPlot.savefig("results/PlotXi$(info)Nx$(Nx)N$(obj.settings.N)tEnd$(obj.settings.tEnd).png")
 
-    fig = figure(figsize=(9,8)) # Create a figure and save its handle
-    #fig = figure(figsize=PyPlot.figaspect(0.5))
-    #ax = gca()
-    #ax.set_xlabel(L"\xi_1", fontsize=20);
-    #ax.set_ylabel(L"\xi_2")
-    xlabel(L"\xi_1", fontsize=20)
-    ylabel(L"\xi_2", fontsize=20)
+    fig = figure("Figure4e",figsize=(9,8)) # Create a figure and save its handle
+
     xgrid, ygrid = meshgrid(xiFine, xiFine)
     surf(xgrid, ygrid, uExact, rstride=2, cstride=2, cmap=ColorMap("viridis"), alpha=0.7)
-
+    tick_params(labelsize=12) 
+    xlabel(L"\xi_1", fontsize=15)
+    ylabel(L"\xi_2", fontsize=15)
     #ax.set_zlabel('u')
     tight_layout()
     plt.draw()
-    PyPlot.savefig("results/PlotXiExactX$(obj.settings.x[index]).png")
+    #PyPlot.savefig("results/PlotXiExactX$(obj.settings.x[index]).png")
     #zlim(-0.5, 1.0)
 
 end
@@ -271,7 +271,7 @@ function PlotExpectedValue(obj::Plotting,u::Array{Float64,2},v::Array{Float64,2}
     PyPlot.savefig("results/ExpectedValueVar2D$(info)Nx$(Nx)N$(obj.settings.N)tEnd$(obj.settings.tEnd)r$(obj.settings.r)lambda$(s.lambda).png")
 end
 
-function PlotExpectedValue(obj::Plotting,u::Array{Float64,2},v::Array{Float64,2},w::Array{Float64,2},info::String="")
+function PlotExpectedValue(obj::Plotting,u::Array{Float64,2},v::Array{Float64,2},w::Array{Float64,2},info::String="",figlabel::String="")
     Nq = obj.settings.Nq;
     Nx = obj.settings.Nx;
     NxFine = 1000;
@@ -286,8 +286,8 @@ function PlotExpectedValue(obj::Plotting,u::Array{Float64,2},v::Array{Float64,2}
     varWPlot = zeros(Nx);
 
     # start plot
-    fig, ax = subplots(figsize=(15, 8), dpi=100)#, facecolor='w', edgecolor='k') # dpi Aufloesung
-
+    fig = figure(figlabel,figsize=(15, 8), dpi=100)#, facecolor='w', edgecolor='k') # dpi Aufloesung
+    ax = gca()
     for j = 1:Nx
         uVals = EvalAtQuad(obj.basis,u[:,j]);
         uPlot[j] = Integral(obj.q,uVals*0.25);
@@ -352,7 +352,7 @@ function PlotExpectedValue(obj::Plotting,u::Array{Float64,2},v::Array{Float64,2}
     ax.tick_params("both",labelsize=20) 
     ax2.tick_params("both",labelsize=20)
     fig.canvas.draw() # Update the figure
-    PyPlot.savefig("results/ExpectedValueVar2D$(info)Nx$(Nx)N$(obj.settings.N)tEnd$(obj.settings.tEnd)r$(obj.settings.r)lambda$(s.lambda).png")
+    #PyPlot.savefig("results/ExpectedValueVar2D$(info)Nx$(Nx)N$(obj.settings.N)tEnd$(obj.settings.tEnd)r$(obj.settings.r)lambda$(s.lambda).png")
 end
 
 function CompareExpectedValue(obj::Plotting,s::Int,u::Array{Float64,3},uL1::Array{Float64,3},v::Array{Float64,3},x)

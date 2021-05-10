@@ -66,7 +66,7 @@ mutable struct Settings
 
     function Settings()
         # define spatial grid
-        Nx = 600; #3500
+        Nx = 600;
         a = 0.0;
         b = 1.0;
         x = range(a,stop = b,length = Nx)

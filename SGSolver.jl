@@ -121,22 +121,11 @@ end
 function Filter(obj::Solver,u::Array{Float64,2})
     lambda = obj.settings.lambda
     N = obj.settings.N;
-    if obj.settings.filterType == "L2"
-        for j = 1:size(u,2)
-            for i = 1:N
-                for l = 1:N
-                    #u[(l-1)*N+i,j] = u[(l-1)*N+i,j]/(1+lambda*(i-1)^2*i^2*(l-1)^2*l^2);
-                    u[(l-1)*N+i,j] = u[(l-1)*N+i,j]/(1+lambda*(i-1)^2*i^2+lambda*(l-1)^2*l^2);
-                end
-            end
-        end
-    elseif obj.settings.filterType == "EXP"
-        epsilonM = eps(Float64);
-        c = log( epsilonM );
-        for j = 1:size(u,2)
-            for i = 1:size(u,1)
-                eta = i/(obj.settings.N+1)
-                u[i,j] = u[i,j]*exp( c * eta^obj.settings.filterOrder )^(lambda*obj.settings.dt);
+    for j = 1:size(u,2)
+        for i = 1:N
+            for l = 1:N
+                #u[(l-1)*N+i,j] = u[(l-1)*N+i,j]/(1+lambda*(i-1)^2*i^2*(l-1)^2*l^2);
+                u[(l-1)*N+i,j] = u[(l-1)*N+i,j]/(1+lambda*(i-1)^2*i^2+lambda*(l-1)^2*l^2);
             end
         end
     end

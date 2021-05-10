@@ -55,12 +55,12 @@ uDLRF = Array((X*S*W')')
 #########################
 ##### Plot solution #####
 #########################
-plotSolution = Plotting(s,basis,q,s.tEnd);
+plotSolution = Plotting(s,solver.basis,solver.q,s.tEnd);
 
 x0 = 0.42;
-PlotInXi(plotSolution,uSG,convert(Int, round(s.Nx*x0/(s.b-s.a))),"SG");
-PlotInXi(plotSolution,uDLR,convert(Int, round(s.Nx*x0/(s.b-s.a))),"DLR");
-PlotInXi(plotSolution,uDLRF,convert(Int, round(s.Nx*x0/(s.b-s.a))),"uDLR");
+PlotInXi(plotSolution,uSG,convert(Int, round(s.Nx*x0/(s.b-s.a))),"Figure4a");
+PlotInXi(plotSolution,uDLR,convert(Int, round(s.Nx*x0/(s.b-s.a))),"Figure4b");
+#PlotInXi(plotSolution,uDLRF,convert(Int, round(s.Nx*x0/(s.b-s.a))),"Figure4c");
 
 Nq = plotSolution.settings.Nq;
 Nx = plotSolution.settings.Nx;
@@ -75,11 +75,11 @@ varVPlot = zeros(Nx);
 wPlot = zeros(Nx);
 varWPlot = zeros(Nx);
 
-PlotExpectedValue(plotSolution,uSG,uDLR,uDLRF,"noFilter");
+PlotExpectedValue(plotSolution,uSG,uDLR,uDLRF,"noFilter","Figure1");
 
 # start plot
-fig, ax = subplots(figsize=(15, 8), dpi=100)#, facecolor='w', edgecolor='k') # dpi Aufloesung
-
+fig = figure("Figure2",figsize=(15, 8), dpi=100)#, facecolor='w', edgecolor='k') # dpi Aufloesung
+ax = gca()
 for j = 1:Nx
     uVals = EvalAtQuad(plotSolution.basis,uSG[:,j]);
     uPlot[j] = Integral(plotSolution.q,uVals*0.25);
@@ -139,7 +139,6 @@ ax.legend(loc="upper right", fontsize=20)
 ax.tick_params("both",labelsize=20) 
 ax2.tick_params("both",labelsize=20)
 fig.canvas.draw() # Update the figure
-PyPlot.savefig("results/BCComparison.png")
 
 #########################################
 ##### run computations with filters #####
@@ -165,10 +164,6 @@ solver = DLRSolver(s);
 
 uDLR = Array((X*S*W')')
 
-npzwrite("data/DLRbackNCons$(s.NCons)Rank$(s.r)Nx$(s.Nx)N$(s.N)tEnd$(s.tEnd)lambda$(s.lambda)cfl$(s.cfl).npy", Array((X*S*W')'))
-npzwrite("data/WBasisNCons$(s.NCons)DLRbackRank$(s.r)Nx$(s.Nx)N$(s.N)tEnd$(s.tEnd)lambda$(s.lambda)cfl$(s.cfl).npy", W)
-npzwrite("data/XBasisNCons$(s.NCons)DLRbackRank$(s.r)Nx$(s.Nx)N$(s.N)tEnd$(s.tEnd)lambda$(s.lambda)cfl$(s.cfl).npy", X)
-
 #################################
 # run unconventional integrator #
 #################################
@@ -182,13 +177,13 @@ uDLRF = Array((X*S*W')')
 ###################################################
 ##                      Plot                     ##
 ###################################################
-PlotExpectedValue(plotSolution,uSG,uDLR,uDLRF,"Filter");
+PlotExpectedValue(plotSolution,uSG,uDLR,uDLRF,"Filter","Figure3");
 
 x0 = 0.42;
 
-PlotInXi(plotSolution,uSG,convert(Int, round(s.Nx*x0/(s.b-s.a))),"fSG");
-PlotInXi(plotSolution,uDLR,convert(Int, round(s.Nx*x0/(s.b-s.a))),"fDLR");
-PlotInXi(plotSolution,uDLRF,convert(Int, round(s.Nx*x0/(s.b-s.a))),"fuDLR");
+PlotInXi(plotSolution,uSG,convert(Int, round(s.Nx*x0/(s.b-s.a))),"Figure4c");
+PlotInXi(plotSolution,uDLR,convert(Int, round(s.Nx*x0/(s.b-s.a))),"Figure4d");
+#PlotInXi(plotSolution,uDLRF,convert(Int, round(s.Nx*x0/(s.b-s.a))),"fuDLR");
 
 #################################################
 ##                  Plot basis                 ##
@@ -206,7 +201,7 @@ for n = 1:s.r
     end
 end
 
-fig = figure("pyplot_axis_placement",figsize=(10,10))
+fig = figure("Figure5",figsize=(10,10))
 ax = fig.add_subplot(3,3,1, projection="3d")
 surf(xgrid, ygrid, WDLRPlot[1,:,:]', cmap=ColorMap("viridis"), alpha=0.7)
 tight_layout()
@@ -242,5 +237,3 @@ tight_layout()
 ax = fig.add_subplot(3,3,9, projection="3d")
 surf(xgrid, ygrid, WDLRPlot[9,:,:]', cmap=ColorMap("viridis"), alpha=0.7)
 tight_layout()
-
-PyPlot.savefig("results/PlotWProjectorSplitting.png")
